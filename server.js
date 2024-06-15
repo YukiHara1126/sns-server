@@ -6,7 +6,7 @@ const postsRouter = require("./routers/posts");
 const userRouter = require("./routers/users");
 const cors = require("cors");
 
-const PORT = 8000;
+const PORT = 10000;
 
 app.use(express.json());
 app.use(cors());
