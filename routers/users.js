@@ -9,6 +9,7 @@ router.get("/find", isAuthenticated, async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.userId },
+      include: { profile: true },
     });
 
     if (!user) {
@@ -16,7 +17,12 @@ router.get("/find", isAuthenticated, async (req, res) => {
     }
 
     res.status(200).json({
-      user: { id: user.id, email: user.email, username: user.name },
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        profile: user.profile,
+      },
     });
   } catch (err) {
     res.status(500).json({ message: "エラーが発生しました" });
@@ -25,9 +31,9 @@ router.get("/find", isAuthenticated, async (req, res) => {
 
 router.get("/profile/:userId", async (req, res) => {
   const { userId } = req.params;
-  const user = await prisma.profile.findUnique({
-    where: { userId: parseInt(userId) },
-    include: { user: { include: { profile: true } } },
+  const user = await prisma.user.findUnique({
+    where: { id: parseInt(userId) },
+    include: { profile: true, posts: { orderBy: { createdAt: "desc" } } },
   });
 
   if (!user) {
